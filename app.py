@@ -9,12 +9,11 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 
 # ── Database ──────────────────────────────────────────────────────────────────
-# On Render, SQLite lives on the persistent disk mounted at /data.
-# Locally it falls back to the instance/ folder.
+# On Render free tier, use /tmp (ephemeral). Locally falls back to instance/.
 _db_path = os.environ.get(
     "DATABASE_URL",
     os.path.join(
-        "/data" if os.path.isdir("/data") else os.path.join(os.path.dirname(__file__), "instance"),
+        "/tmp" if os.path.isdir("/tmp") else os.path.join(os.path.dirname(__file__), "instance"),
         "school_management.db"
     )
 )

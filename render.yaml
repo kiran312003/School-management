@@ -15,7 +15,3 @@ services:
         value: production
       - key: SECRET_KEY
         generateValue: true
-    disk:
-      name: school-db
-      mountPath: /data
-      sizeGB: 1
