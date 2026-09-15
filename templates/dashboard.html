@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Executive Operations Dashboard</h1>
+    <div class="page-desc">Institutional performance overview: Admissions velocity, student attendance compliance, academic risk monitoring, and fee collections.</div>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('leads') }}" class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      <span>New Enquiry</span>
+    </a>
+    <a href="{{ url_for('attendance') }}" class="btn btn-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+      <span>Mark Attendance</span>
+    </a>
+  </div>
+</div>
+
+<!-- Commercial KPI Cards -->
+<div class="metrics-row">
+  <div class="metric-card">
+    <div class="metric-header">
+      <span class="metric-title">Enrolled Students</span>
+      <div class="metric-icon-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      </div>
+    </div>
+    <div class="metric-value">{{ metrics.total_students }}</div>
+    <div class="metric-footer">
+      <span class="trend-badge trend-up">&uarr; 4.8%</span>
+      <span>vs previous academic session</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-header">
+      <span class="metric-title">Total Tuition Billed</span>
+      <div class="metric-icon-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+      </div>
+    </div>
+    <div class="metric-value">₹{{ '%.2f'|format(metrics.total_fees) }}</div>
+    <div class="metric-footer">
+      <span>Applicable fee schedule AY 2026–27</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-header">
+      <span class="metric-title">Collected Revenue</span>
+      <div class="metric-icon-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+    </div>
+    <div class="metric-value" style="color: var(--emerald-600);">₹{{ '%.2f'|format(metrics.collected) }}</div>
+    <div class="metric-footer">
+      {% set rate = ((metrics.collected / metrics.total_fees) * 100)|round(1) if metrics.total_fees > 0 else 0 %}
+      <span class="trend-badge trend-up">{{ rate }}%</span>
+      <span>overall fee realization rate</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-header">
+      <span class="metric-title">Outstanding Dues</span>
+      <div class="metric-icon-wrap">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+    </div>
+    <div class="metric-value" style="color: var(--rose-600);">₹{{ '%.2f'|format(metrics.outstanding) }}</div>
+    <div class="metric-footer">
+      <span class="trend-badge trend-down">Pending</span>
+      <span>due across installments</span>
+    </div>
+  </div>
+</div>
+
+<!-- Two-Column Analysis: Funnel vs Class Breakdown -->
+<div class="grid-two-col">
+  <!-- Admissions Funnel -->
+  <div class="saas-card">
+    <div class="saas-card-header">
+      <div class="saas-card-title">Admissions Conversion Funnel</div>
+      <a href="{{ url_for('leads') }}" class="btn btn-secondary btn-sm">Manage Leads</a>
+    </div>
+    <div class="saas-card-body">
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        {% set total_leads = metrics.funnel.values()|sum %}
+        {% for stage, count in metrics.funnel.items() %}
+          {% set pct = ((count / total_leads) * 100)|round(1) if total_leads > 0 else 0 %}
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 5px;">
+              <span style="font-weight: 600; color: var(--slate-700);">{{ stage }}</span>
+              <span style="font-feature-settings: 'tnum'; font-weight: 600; color: var(--slate-900);">{{ count }} <span style="color: var(--slate-400); font-weight: 400;">({{ pct }}%)</span></span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill {% if stage == 'Converted to Student' %}success{% endif %}" style="width: {{ pct if pct > 5 else 8 }}%;"></div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Class Fee Collection -->
+  <div class="saas-card">
+    <div class="saas-card-header">
+      <div class="saas-card-title">Fee Realization by Grade</div>
+      <a href="{{ url_for('fees') }}" class="btn btn-secondary btn-sm">Fee Ledger</a>
+    </div>
+    <div class="saas-card-body" style="padding: 0;">
+      {% if metrics.class_summary %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Grade Level</th>
+              <th>Collected</th>
+              <th>Outstanding</th>
+              <th>Realization</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in metrics.class_summary %}
+            {% set pct = ((item.collected / item.total) * 100)|round(1) if item.total > 0 else 0 %}
+            <tr>
+              <td style="font-weight: 600;">{{ item.class_name }}</td>
+              <td style="color: var(--emerald-600); font-weight: 600;">₹{{ '%.2f'|format(item.collected) }}</td>
+              <td style="color: {% if item.outstanding > 0 %}var(--rose-600){% else %}var(--slate-400){% endif %}; font-weight: 600;">
+                ₹{{ '%.2f'|format(item.outstanding) }}
+              </td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div class="progress-bar-wrap" style="width: 70px;">
+                    <div class="progress-bar-fill success" style="width: {{ pct }}%;"></div>
+                  </div>
+                  <span style="font-size: 0.78rem; font-weight: 600;">{{ pct }}%</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div style="padding: 20px; color: var(--slate-500); font-size: 0.88rem;">No fee collection records initialized yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- ADDITIONAL FEATURE: Academic & Attendance Early Warning Center -->
+<div class="saas-card">
+  <div class="saas-card-header" style="background-color: #fef2f2; border-bottom-color: #fee2e2;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose-600)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      <div>
+        <div class="saas-card-title" style="color: #991b1b;">Student At-Risk Early Warning &amp; Intervention Center</div>
+        <div style="font-size: 0.78rem; color: #b91c1c;">Automated weekly Deluge cron flagged students below 75% attendance or 40% exam marks with 7-day alert cooldown.</div>
+      </div>
+    </div>
+    <span class="badge-pill badge-at-risk">
+      <span class="badge-dot"></span>
+      {{ metrics.defaulters|length }} Action Required
+    </span>
+  </div>
+
+  <div class="saas-card-body" style="padding: 0;">
+    {% if metrics.defaulters %}
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Academic Status</th>
+            <th>Attendance Rate</th>
+            <th>Examination Average</th>
+            <th>Primary Risk Factor</th>
+            <th>Intervention Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in metrics.defaulters %}
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar" style="background: var(--rose-50); color: var(--rose-600); border-color: var(--rose-100);">
+                  {{ item.name[0] }}
+                </div>
+                <div>
+                  <div class="user-cell-title">{{ item.name }}</div>
+                  <div class="user-cell-sub">Enrolled Candidate</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge-pill badge-at-risk">
+                <span class="badge-dot"></span>
+                {{ item.status }}
+              </span>
+            </td>
+            <td>
+              <span style="font-weight: 700; color: {% if item.attendance < 75 %}var(--rose-600){% else %}var(--emerald-600){% endif %};">
+                {{ item.attendance }}%
+              </span>
+            </td>
+            <td>
+              <span style="font-weight: 700; color: {% if item.average_marks < 40 %}var(--rose-600){% else %}var(--emerald-600){% endif %};">
+                {{ item.average_marks }}%
+              </span>
+            </td>
+            <td style="font-size: 0.8rem; color: var(--slate-600);">
+              {% if item.attendance < 75 and item.average_marks < 40 %}
+                Dual Risk: Chronic Absenteeism &amp; Academic Slippage
+              {% elif item.attendance < 75 %}
+                Chronic Absenteeism (&lt; 75% school benchmark)
+              {% else %}
+                Academic Remediation Needed (&lt; 40% passing benchmark)
+              {% endif %}
+            </td>
+            <td>
+              <button class="btn btn-secondary btn-sm" onclick="alert('Parent advisory email sent per 7-day rate-limiting cooldown. Advisory logged in Zoho CRM student notes.');">
+                Schedule Advisory
+              </button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div style="padding: 24px; text-align: center; color: var(--emerald-600); font-weight: 600; font-size: 0.9rem;">
+        All enrolled students currently meet the required attendance and academic criteria.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

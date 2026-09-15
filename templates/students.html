@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Enrolled Students Master Directory</h1>
+    <div class="page-desc">System of Record for active student profiles, academic progression records, and compliance monitoring.</div>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('leads') }}" class="btn btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      <span>Process New Admission</span>
+    </a>
+  </div>
+</div>
+
+<div class="saas-card">
+  <div class="saas-card-header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="saas-card-title">Enrolled Student Records</div>
+      <span class="badge-pill badge-neutral">
+        <span class="badge-dot"></span>
+        {{ students|length }} Active Students
+      </span>
+    </div>
+  </div>
+
+  <div class="saas-card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student Profile</th>
+            <th>Student ID</th>
+            <th>Class &amp; Section</th>
+            <th>Attendance Rate</th>
+            <th>Fee Ledger Status</th>
+            <th>Academic Standing</th>
+            <th>Admission Date</th>
+            <th style="text-align: right;">Portal View</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in students %}
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar" style="background: var(--primary-50); color: var(--primary-700); border-color: var(--primary-100);">
+                  {{ student.first_name[0] }}
+                </div>
+                <div>
+                  <div class="user-cell-title">{{ student.full_name }}</div>
+                  <div class="user-cell-sub">{{ student.parent_email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="code-tag">{{ student.student_id }}</span>
+            </td>
+            <td>
+              <strong>{{ student.current_class }}</strong>
+              <span style="color: var(--slate-500); font-size: 0.8rem;">(Sec {{ student.section }})</span>
+            </td>
+            <td>
+              {% set att = student.attendance_percentage %}
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="progress-bar-wrap" style="width: 60px;">
+                  <div class="progress-bar-fill {% if att >= 75 %}success{% else %}warning{% endif %}" style="width: {{ att }}%;"></div>
+                </div>
+                <span style="font-weight: 600; font-size: 0.82rem; color: {% if att >= 75 %}var(--emerald-700){% else %}var(--rose-600){% endif %};">
+                  {{ att }}%
+                </span>
+              </div>
+            </td>
+            <td>
+              {% set fee = student.fee_records[-1] if student.fee_records else None %}
+              {% if fee %}
+                {% if fee.payment_status == 'Paid' %}
+                  <span class="badge-pill badge-active">
+                    <span class="badge-dot"></span>
+                    Paid in Full
+                  </span>
+                {% elif fee.payment_status == 'Partial' or fee.payment_status == 'Partially Paid' %}
+                  <span class="badge-pill badge-partial">
+                    <span class="badge-dot"></span>
+                    Partial (₹{{ '%.0f'|format(fee.outstanding_amount) }} due)
+                  </span>
+                {% else %}
+                  <span class="badge-pill badge-overdue">
+                    <span class="badge-dot"></span>
+                    Overdue (₹{{ '%.0f'|format(fee.outstanding_amount) }})
+                  </span>
+                {% endif %}
+              {% else %}
+                <span class="badge-pill badge-neutral">No Ledger</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if student.academic_status == 'At-Risk' %}
+                <span class="badge-pill badge-at-risk">
+                  <span class="badge-dot"></span>
+                  At-Risk Flagged
+                </span>
+              {% else %}
+                <span class="badge-pill badge-active">
+                  <span class="badge-dot"></span>
+                  Good Standing
+                </span>
+              {% endif %}
+            </td>
+            <td style="font-size: 0.82rem; color: var(--slate-500);">
+              {{ student.admission_date }}
+            </td>
+            <td style="text-align: right;">
+              <a href="{{ url_for('parent_portal') }}" class="btn btn-secondary btn-sm">
+                <span>View Portal</span>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

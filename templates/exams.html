@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Academic Examinations &amp; Gradebook</h1>
+    <div class="page-desc">Record term exam scores, validate mark ranges, execute automated grading rules, and track student subject proficiencies.</div>
+  </div>
+</div>
+
+<!-- Exam Marks Entry Station -->
+<div class="saas-card" style="margin-bottom: 20px;">
+  <div class="saas-card-header">
+    <div class="saas-card-title">Record Examination Subject Score</div>
+    <span style="font-size: 0.78rem; color: var(--slate-500);">Automated grade derivation: A+ (&ge;90%), A (&ge;75%), B (&ge;60%), C (&ge;40%), F (&lt;40%)</span>
+  </div>
+  <div class="saas-card-body">
+    <form method="POST">
+      <div class="form-row">
+        <div class="form-group" style="flex: 2;">
+          <label class="form-label">Student Candidate *</label>
+          <select class="form-control" name="student_id" required>
+            {% for student in students %}
+            <option value="{{ student.id }}">{{ student.full_name }} ({{ student.current_class }})</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1.5;">
+          <label class="form-label">Examination Term *</label>
+          <select class="form-control" name="exam_name" required>
+            <option value="Mid-Term">Mid-Term Assessment</option>
+            <option value="Final">Annual Final Examination</option>
+            <option value="Unit Test 1">Unit Test 1</option>
+            <option value="Unit Test 2">Unit Test 2</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1.5;">
+          <label class="form-label">Subject *</label>
+          <select class="form-control" name="subject" required>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="English Language">English Language</option>
+            <option value="Social Studies">Social Studies</option>
+            <option value="Computer Science">Computer Science</option>
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Marks Obtained *</label>
+          <input type="number" step="0.5" min="0" max="100" class="form-control" name="marks_obtained" placeholder="85" required />
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Max Marks *</label>
+          <input type="number" step="1" min="1" class="form-control" name="max_marks" value="100" required />
+        </div>
+        <div class="form-group" style="justify-content: flex-end; flex: 1;">
+          <button type="submit" class="btn btn-primary" style="height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            <span>Save Marks</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Academic Gradebook Table -->
+<div class="saas-card">
+  <div class="saas-card-header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="saas-card-title">Subject Examination Marksheet</div>
+      <span class="badge-pill badge-neutral">
+        <span class="badge-dot"></span>
+        {{ exam_results|length }} Recorded Results
+      </span>
+    </div>
+  </div>
+
+  <div class="saas-card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Term</th>
+            <th>Subject</th>
+            <th>Score</th>
+            <th>Performance</th>
+            <th>Assigned Grade</th>
+            <th>Academic Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for result in exam_results %}
+          {% set pct = result.percentage %}
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar">
+                  {{ result.student_detail.first_name[0] }}
+                </div>
+                <div>
+                  <div class="user-cell-title">{{ result.student_detail.full_name }}</div>
+                  <div class="user-cell-sub">{{ result.student_detail.current_class }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="code-tag">{{ result.exam_name }}</span>
+            </td>
+            <td style="font-weight: 600; color: var(--slate-900);">
+              {{ result.subject }}
+            </td>
+            <td style="font-feature-settings: 'tnum'; font-weight: 600;">
+              {{ result.marks_obtained }} / {{ result.max_marks }}
+            </td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="progress-bar-wrap" style="width: 60px;">
+                  <div class="progress-bar-fill {% if pct >= 60 %}success{% elif pct >= 40 %}warning{% else %}rose{% endif %}" style="width: {{ pct }}%;"></div>
+                </div>
+                <span style="font-weight: 600; font-size: 0.82rem;">{{ pct }}%</span>
+              </div>
+            </td>
+            <td>
+              {% if pct >= 90 %}
+                <span class="badge-pill badge-active" style="font-weight: 700;">Grade A+ (Distinction)</span>
+              {% elif pct >= 75 %}
+                <span class="badge-pill badge-active" style="font-weight: 700;">Grade A (Merit)</span>
+              {% elif pct >= 60 %}
+                <span class="badge-pill badge-primary" style="font-weight: 700;">Grade B (Satisfactory)</span>
+              {% elif pct >= 40 %}
+                <span class="badge-pill badge-partial" style="font-weight: 700;">Grade C (Pass)</span>
+              {% else %}
+                <span class="badge-pill badge-at-risk" style="font-weight: 700;">Grade F (Remedial Required)</span>
+              {% endif %}
+            </td>
+            <td>
+              {% if pct < 40 %}
+                <span style="color: var(--rose-600); font-weight: 600; font-size: 0.78rem;">Academic Intervention Flag</span>
+              {% else %}
+                <span style="color: var(--emerald-600); font-weight: 600; font-size: 0.78rem;">Passed</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

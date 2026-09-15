@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Admissions Pipeline &amp; Lead Desk</h1>
+    <div class="page-desc">Manage inbound prospective student enquiries, track interview stages, and execute atomic student conversions.</div>
+  </div>
+  <div class="page-actions">
+    <a href="{{ url_for('admission_webform') }}" target="_blank" class="btn btn-secondary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      <span>Public Webform</span>
+    </a>
+  </div>
+</div>
+
+<!-- Manual Enquiry Entry (Collapsible / Clean Form) -->
+<div class="saas-card" style="margin-bottom: 20px;">
+  <div class="saas-card-header">
+    <div class="saas-card-title">Manual Admissions Walk-in Entry</div>
+    <span style="font-size: 0.78rem; color: var(--slate-500);">For in-person campus visits &amp; phone enquiries</span>
+  </div>
+  <div class="saas-card-body">
+    <form method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Student First Name *</label>
+          <input type="text" class="form-control" name="first_name" placeholder="e.g. Arjun" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Student Last Name *</label>
+          <input type="text" class="form-control" name="last_name" placeholder="e.g. Rao" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parent Email Address *</label>
+          <input type="email" class="form-control" name="parent_email" placeholder="parent.rao@example.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Class Applied For *</label>
+          <select class="form-control" name="grade_applied" required>
+            <option>Grade 1</option>
+            <option>Grade 2</option>
+            <option>Grade 3</option>
+            <option>Grade 4</option>
+            <option>Grade 5</option>
+            <option>Grade 6</option>
+            <option>Grade 7</option>
+            <option>Grade 8</option>
+            <option>Grade 9</option>
+            <option>Grade 10</option>
+          </select>
+        </div>
+        <div class="form-group" style="justify-content: flex-end;">
+          <button type="submit" class="btn btn-primary" style="height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Log Inbound Lead</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- CRM Leads Pipeline Table -->
+<div class="saas-card">
+  <div class="saas-card-header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="saas-card-title">Enquiry Records</div>
+      <span class="badge-pill badge-neutral">
+        <span class="badge-dot"></span>
+        {{ leads|length }} Total Candidates
+      </span>
+    </div>
+  </div>
+
+  <div class="saas-card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Applicant Candidate</th>
+            <th>Target Grade</th>
+            <th>Primary Parent Contact</th>
+            <th>Admission Stage</th>
+            <th>Received Date</th>
+            <th style="text-align: right;">Qualification Workflow</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lead in leads %}
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar">
+                  {{ lead.first_name[0] }}
+                </div>
+                <div>
+                  <div class="user-cell-title">{{ lead.full_name }}</div>
+                  <div class="user-cell-sub">Source: CRM Webform</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="code-tag">{{ lead.grade_applied }}</span>
+            </td>
+            <td>
+              <div style="font-size: 0.84rem; font-weight: 500; color: var(--slate-900);">{{ lead.parent_email }}</div>
+            </td>
+            <td>
+              {% if lead.lead_status == 'Converted to Student' %}
+                <span class="badge-pill badge-active">
+                  <span class="badge-dot"></span>
+                  Converted to Student
+                </span>
+              {% elif lead.lead_status == 'Confirmed' %}
+                <span class="badge-pill badge-active">
+                  <span class="badge-dot"></span>
+                  Admission Confirmed
+                </span>
+              {% elif lead.lead_status == 'Interview Scheduled' %}
+                <span class="badge-pill badge-partial">
+                  <span class="badge-dot"></span>
+                  Interview Scheduled
+                </span>
+              {% else %}
+                <span class="badge-pill badge-primary">
+                  <span class="badge-dot"></span>
+                  Enquiry (New)
+                </span>
+              {% endif %}
+            </td>
+            <td style="font-size: 0.8rem; color: var(--slate-500);">
+              {{ lead.created_at.strftime('%Y-%m-%d') }}
+            </td>
+            <td style="text-align: right;">
+              {% if lead.lead_status != 'Converted to Student' %}
+              <form method="POST" action="{{ url_for('confirm_lead', lead_id=lead.id) }}" style="display: inline-block;">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg>
+                  <span>Admit Student</span>
+                </button>
+              </form>
+              {% else %}
+              <span style="font-size: 0.8rem; font-weight: 600; color: var(--emerald-600); display: inline-flex; align-items: center; gap: 4px;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Enrolled in CRM
+              </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

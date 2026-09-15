@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Daily Attendance Tracking Station</h1>
+    <div class="page-desc">Record attendance records with automated pre-save validation to prevent duplicate student marks on identical dates.</div>
+  </div>
+</div>
+
+<!-- Daily Entry Station Form -->
+<div class="saas-card" style="margin-bottom: 20px;">
+  <div class="saas-card-header">
+    <div class="saas-card-title">Mark Student Attendance</div>
+    <span style="font-size: 0.78rem; color: var(--slate-500);">Pre-save validation rule enforced on (Student_ID + Date)</span>
+  </div>
+  <div class="saas-card-body">
+    <form method="POST">
+      <div class="form-row">
+        <div class="form-group" style="flex: 2;">
+          <label class="form-label">Select Student *</label>
+          <select class="form-control" name="student_id" required>
+            {% for student in students %}
+            <option value="{{ student.id }}">{{ student.full_name }} ({{ student.student_id }}) — {{ student.current_class }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Attendance Date *</label>
+          <input type="date" class="form-control" name="attendance_date" value="2026-08-05" required />
+        </div>
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Attendance Status *</label>
+          <select class="form-control" name="status" required>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+            <option value="Late">Late</option>
+            <option value="Excused">Excused</option>
+          </select>
+        </div>
+        <div class="form-group" style="justify-content: flex-end; flex: 1;">
+          <button type="submit" class="btn btn-primary" style="height: 38px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            <span>Log Daily Mark</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Attendance Audit Ledger -->
+<div class="saas-card">
+  <div class="saas-card-header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="saas-card-title">Attendance Audit Ledger</div>
+      <span class="badge-pill badge-neutral">
+        <span class="badge-dot"></span>
+        {{ attendance_records|length }} Total Logs
+      </span>
+    </div>
+  </div>
+
+  <div class="saas-card-body" style="padding: 0;">
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Class &amp; Section</th>
+            <th>Attendance Date</th>
+            <th>Logged Status</th>
+            <th>System Uniqueness Verification Key</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in attendance_records %}
+          <tr>
+            <td>
+              <div class="user-cell">
+                <div class="user-cell-avatar">
+                  {{ record.student_detail.first_name[0] }}
+                </div>
+                <div>
+                  <div class="user-cell-title">{{ record.student_detail.full_name }}</div>
+                  <div class="user-cell-sub">{{ record.student_detail.student_id }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              {{ record.class_name }} <span style="color: var(--slate-400);">(Sec {{ record.section }})</span>
+            </td>
+            <td style="font-weight: 600;">
+              {{ record.display_date }}
+            </td>
+            <td>
+              {% if record.status == 'Present' %}
+                <span class="badge-pill badge-active">
+                  <span class="badge-dot"></span>
+                  Present
+                </span>
+              {% elif record.status == 'Absent' %}
+                <span class="badge-pill badge-at-risk">
+                  <span class="badge-dot"></span>
+                  Absent
+                </span>
+              {% elif record.status == 'Late' %}
+                <span class="badge-pill badge-partial">
+                  <span class="badge-dot"></span>
+                  Late Arrival
+                </span>
+              {% else %}
+                <span class="badge-pill badge-neutral">
+                  <span class="badge-dot"></span>
+                  Excused
+                </span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="code-tag">{{ record.unique_key }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

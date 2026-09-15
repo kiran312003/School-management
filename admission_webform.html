@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Admission Application — School Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-main: 'Plus Jakarta Sans', sans-serif;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50:  #f8fafc;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --emerald: #059669;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: #f1f5f9;
+      color: var(--slate-900);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Top Institutional Bar */
+    .site-nav {
+      width: 100%;
+      background: #ffffff;
+      border-bottom: 1px solid var(--slate-200);
+      padding: 14px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-emblem {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--slate-900);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.01em;
+    }
+
+    .nav-sub {
+      font-size: 0.75rem;
+      color: var(--slate-500);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.82rem;
+      color: var(--slate-600);
+    }
+
+    /* Main Container */
+    .portal-main {
+      width: 100%;
+      max-width: 840px;
+      padding: 40px 20px;
+    }
+
+    /* Hero Banner */
+    .form-hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1px solid var(--slate-200);
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--slate-700);
+      margin-bottom: 12px;
+    }
+
+    .hero-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    .form-hero h1 {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .form-hero p {
+      color: var(--slate-600);
+      font-size: 0.95rem;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    /* Card Wrapper */
+    .form-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      padding: 36px 40px;
+    }
+
+    /* Section Stepper */
+    .form-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--slate-100);
+      margin-bottom: 20px;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--slate-100);
+      color: var(--slate-700);
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Grid Layouts */
+    .field-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .field-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--slate-700);
+    }
+
+    label span.req {
+      color: #e11d48;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: var(--slate-900);
+      background-color: #ffffff;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .field-hint {
+      font-size: 0.74rem;
+      color: var(--slate-500);
+    }
+
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--slate-100);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--slate-500);
+    }
+
+    .btn-submit {
+      background: var(--slate-900);
+      color: #ffffff;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--slate-800);
+    }
+
+    /* Success Banner */
+    .success-card {
+      display: none;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .success-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    /* Footer */
+    .portal-footer {
+      text-align: center;
+      color: var(--slate-500);
+      font-size: 0.8rem;
+      margin-top: 32px;
+    }
+
+    @media (max-width: 640px) {
+      .field-grid-2, .field-grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .form-card {
+        padding: 24px 20px;
+      }
+      .site-nav {
+        padding: 12px 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Institutional Bar -->
+  <nav class="site-nav">
+    <div class="nav-brand">
+      <div class="nav-emblem">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="nav-title">School Management</div>
+        <div class="nav-sub">Office of Admissions &bull; Academic Year 2026–2027</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span>Admissions Helpdesk: admissions@schoolmanagement.edu</span>
+    </div>
+  </nav>
+
+  <div class="portal-main">
+    <div class="form-hero">
+      <div class="hero-badge">
+        <span class="hero-dot"></span>
+        <span>Admissions Open &bull; Regular Decision</span>
+      </div>
+      <h1>Student Admission Application</h1>
+      <p>Please provide accurate candidate and family information. Applications are automatically processed by our admissions desk in Zoho CRM.</p>
+    </div>
+
+    <!-- Success Feedback Alert -->
+    <div id="successNotice" class="success-card">
+      <h3>Application Successfully Submitted</h3>
+      <p>Thank you for submitting your child's application to School Management. Your file has been logged in our Zoho CRM admissions pipeline. Our admissions coordinator will contact you regarding document submission and entrance assessments.</p>
+    </div>
+
+    <!-- Main Admission Form -->
+    <div class="form-card">
+      <form id="admissionForm" action="/webform/submit" method="POST" accept-charset="UTF-8">
+        
+        <!-- Hidden fields preserved for CRM field mapping -->
+        <input type="hidden" name="Lead Status" value="New" />
+        <input type="hidden" name="Lead Source" value="Online Webform" />
+
+        <!-- Step 1: Candidate Information -->
+        <div class="form-section-title">
+          <span class="step-num">1</span>
+          <span>Prospective Student Information</span>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <label for="studentFirstName">First Name <span class="req">*</span></label>
+            <input type="text" id="studentFirstName" name="First Name" placeholder="e.g. Aarav" required />
+          </div>
+          <div class="field-group">
+            <label for="studentLastName">Last Name <span class="req">*</span></label>
+            <input type="text" id="studentLastName" name="Last Name" placeholder="e.g. Patel" required />
+          </div>
+        </div>
+
+        <div class="field-grid-3">
+          <div class="field-group">
+            <label for="dob">Date of Birth <span class="req">*</span></label>
+            <input type="date" id="dob" name="DOB" required />
+          </div>
+          <div class="field-group">
+            <label for="gender">Gender <span class="req">*</span></label>
+            <select id="gender" name="Gender" required>
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="gradeApplied">Grade Applied For <span class="req">*</span></label>
+            <select id="gradeApplied" name="Class_Applied_For" required>
+              <option value="">Select Grade Level</option>
+              <option value="Kindergarten">Kindergarten</option>
+              <option value="Grade 1">Grade 1</option>
+              <option value="Grade 2">Grade 2</option>
+              <option value="Grade 3">Grade 3</option>
+              <option value="Grade 4">Grade 4</option>
+              <option value="Grade 5">Grade 5</option>
+              <option value="Grade 6">Grade 6</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+              <option value="Grade 10">Grade 10</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <label for="previousSchool">Previous School Attended</label>
+            <input type="text" id="previousSchool" name="Previous_School" placeholder="e.g. St. Jude International School" />
+          </div>
+          <div class="field-group">
+            <label for="academicYear">Intended Entry Session <span class="req">*</span></label>
+            <select id="academicYear" name="Academic_Year" required>
+              <option value="2026-2027" selected>Academic Session 2026–2027</option>
+              <option value="2025-2026">Immediate Transfer (2025–2026)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 2: Parent / Guardian Details -->
+        <div class="form-section-title" style="margin-top: 16px;">
+          <span class="step-num">2</span>
+          <span>Primary Parent / Guardian Contact</span>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <label for="parentName">Guardian Full Name <span class="req">*</span></label>
+            <input type="text" id="parentName" name="Parent_Name" placeholder="e.g. Rajesh Patel" required />
+          </div>
+          <div class="field-group">
+            <label for="relationship">Relationship to Student <span class="req">*</span></label>
+            <select id="relationship" name="Relationship" required>
+              <option value="Father">Father</option>
+              <option value="Mother">Mother</option>
+              <option value="Guardian">Legal Guardian</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-grid-2">
+          <div class="field-group">
+            <label for="parentEmail">Email Address <span class="req">*</span></label>
+            <input type="email" id="parentEmail" name="Email" placeholder="rajesh.patel@example.com" required />
+            <span class="field-hint">Used for Zoho Creator Parent Portal credentials.</span>
+          </div>
+          <div class="field-group">
+            <label for="parentPhone">Primary Telephone <span class="req">*</span></label>
+            <input type="tel" id="parentPhone" name="Phone" placeholder="+91 98765 43210" required />
+            <span class="field-hint">Used for SMS attendance &amp; fee notifications.</span>
+          </div>
+        </div>
+
+        <!-- Step 3: Residential Address -->
+        <div class="form-section-title" style="margin-top: 16px;">
+          <span class="step-num">3</span>
+          <span>Residential Address &amp; Academic Notes</span>
+        </div>
+
+        <div class="field-group" style="margin-bottom: 18px;">
+          <label for="address">Permanent Street Address</label>
+          <textarea id="address" name="Address" rows="3" placeholder="Enter complete residential address..."></textarea>
+        </div>
+
+        <!-- Submission Controls -->
+        <div class="form-actions">
+          <div class="security-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>256-Bit SSL Encrypted &bull; Direct Zoho CRM Integration</span>
+          </div>
+
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span>Submit Application</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="portal-footer">
+      School Management &bull; Educational ERP Powered by Zoho One &bull; All Rights Reserved
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('admissionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = this;
+      const dob = new Date(document.getElementById('dob').value);
+      const today = new Date();
+      
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+
+      if (age < 3 || age > 20) {
+        alert("Please verify the student's Date of Birth (applicant must be between 3 and 20 years old).");
+        return;
+      }
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = 'Submitting...';
+
+      fetch('/webform/submit', {
+        method: 'POST',
+        body: new FormData(form)
+      }).then(res => {
+        document.getElementById('successNotice').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Application</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>';
+      }).catch(err => {
+        document.getElementById('successNotice').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Submit Application</span>';
+      });
+    });
+  </script>
+</body>
+</html>

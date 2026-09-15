@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Zoho School Management System{% endblock %} — Enterprise Education ERP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <!-- Top Corporate App Shell Header -->
+    <header class="corp-header">
+      <div class="corp-header-top">
+        <div class="brand-suite">
+          <div class="brand-emblem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-name">School Management</div>
+          </div>
+          <span class="brand-badge">Zoho Education ERP</span>
+        </div>
+
+        <div class="corp-header-right">
+          <div class="session-picker">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>AY 2026–2027 (Active Term)</span>
+          </div>
+
+          <div class="user-profile">
+            <div class="user-avatar">AD</div>
+            <div class="user-meta">
+              <div class="user-name">Kiran (Administrator)</div>
+              <div class="user-role">Admissions &amp; Academic Lead</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Navigation Menu with Inline SVGs -->
+      <nav class="corp-nav">
+        <a href="{{ url_for('index') }}" class="corp-nav-item {% if request.endpoint == 'index' or request.endpoint == 'dashboard' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="{{ url_for('leads') }}" class="corp-nav-item {% if request.endpoint == 'leads' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="8.5" cy="7" r="4"></circle>
+            <line x1="20" y1="8" x2="20" y2="14"></line>
+            <line x1="23" y1="11" x2="17" y2="11"></line>
+          </svg>
+          <span>Admissions Pipeline</span>
+        </a>
+
+        <a href="{{ url_for('students') }}" class="corp-nav-item {% if request.endpoint == 'students' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>Student Directory</span>
+        </a>
+
+        <a href="{{ url_for('attendance') }}" class="corp-nav-item {% if request.endpoint == 'attendance' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          <span>Daily Attendance</span>
+        </a>
+
+        <a href="{{ url_for('exams') }}" class="corp-nav-item {% if request.endpoint == 'exams' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span>Examinations</span>
+        </a>
+
+        <a href="{{ url_for('fees') }}" class="corp-nav-item {% if request.endpoint == 'fees' %}active{% endif %}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+            <line x1="1" y1="10" x2="23" y2="10"></line>
+          </svg>
+          <span>Fee Billing</span>
+        </a>
+
+        <a href="{{ url_for('parent_portal') }}" class="portal-nav-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+          <span>Zoho Creator Parent Portal</span>
+        </a>
+      </nav>
+    </header>
+
+    <!-- Sub-Header Status Strip -->
+    <div class="env-strip">
+      <div class="env-status">
+        <span class="status-dot"></span>
+        <span>CRM Master Data Synced with Creator Parent Layer</span>
+      </div>
+      <div class="env-links">
+        <a href="{{ url_for('admission_webform') }}" target="_blank">
+          <span>Public Admission Form</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <span>&bull;</span>
+        <a href="{{ url_for('parent_portal') }}">
+          <span>Parent Demo Login</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="app-container">
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="flash-wrapper">
+            {% for message in messages %}
+              <div class="flash-alert">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>{{ message }}</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Professional Corporate Footer -->
+    <footer class="corp-footer">
+      <div>School Management &bull; Integrated School Operating System (Zoho CRM + Zoho Creator)</div>
+      <div>Confidential &bull; Academic Year 2026–2027 &bull; Build v2.4</div>
+    </footer>
+  </body>
+</html>
